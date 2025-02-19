@@ -19,6 +19,6 @@ router.post('/', async (req, res) => {
 
 router.get('/:id', getCandidateById);
 
-router.put('/:id', updateCandidateStageController);
+router.put('/:id/stage', updateCandidateStageController);
 
 export default router;
