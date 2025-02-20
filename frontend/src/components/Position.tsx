@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import { Card, Container, Spinner, Alert } from 'react-bootstrap';
+import { Card } from './ui/card';
+import { Alert, AlertDescription } from './ui/alert';
 
 interface InterviewStep {
   id: number;
@@ -63,74 +64,70 @@ const Position: React.FC = () => {
 
   if (loading) {
     return (
-      <Container className="text-center mt-5">
-        <Spinner animation="border" role="status" />
+      <div className="container mx-auto mt-5 text-center">
         <p className="mt-2">Cargando información...</p>
-      </Container>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <Container className="mt-5">
-        <Alert variant="danger">{error}</Alert>
-      </Container>
+      <div className="container mx-auto mt-5">
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      </div>
     );
   }
 
   return (
-    <Container className="mt-5">
-      <h2 className="text-center mb-4">
+    <div className="container mx-auto mt-5">
+      <h2 className="text-2xl font-bold text-center mb-4">
         {data?.interviewFlow.positionName || 'Flujo de Entrevistas'}
       </h2>
 
       {data?.interviewFlow.interviewFlow.interviewSteps?.length ? (
-        <div className="row">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {data.interviewFlow.interviewFlow.interviewSteps.map((step) => {
             const stepCandidates = candidates.filter(c => c.idCurrentInterviewStep === step.id);
 
             return (
-              <div key={step.id} className="col-md-4 mb-4">
-                <Card className="shadow-sm">
-                  <Card.Body>
-                    <Card.Title>{step.name}</Card.Title>
-                    <Card.Subtitle className="mb-2 text-muted">
-                      Orden: {step.orderIndex}
-                    </Card.Subtitle>
+              <Card key={step.id} className="p-4">
+                <h3 className="text-lg font-semibold">{step.name}</h3>
+                <p className="text-sm text-muted-foreground">
+                  Orden: {step.orderIndex}
+                </p>
 
-                    {stepCandidates.length > 0 ? (
-                      <div className="mt-3">
-                        {stepCandidates.map(candidate => (
-                          <Card key={candidate.fullName} className="mb-2">
-                            <Card.Body>
-                              <Card.Text>
-                                {candidate.fullName}<br />
-                                Puntaje: {candidate.averageScore}/5
-                              </Card.Text>
-                            </Card.Body>
-                          </Card>
-                        ))}
-                      </div>
-                    ) : (
-                      <Card.Text className="text-muted mt-2">
-                        No hay candidatos en este paso
-                      </Card.Text>
-                    )}
-                  </Card.Body>
-                </Card>
-              </div>
+                {stepCandidates.length > 0 ? (
+                  <div className="mt-4 space-y-2">
+                    {stepCandidates.map(candidate => (
+                      <Card key={candidate.fullName} className="p-3">
+                        <p className="text-sm">
+                          {candidate.fullName}<br />
+                          <span className="text-muted-foreground">
+                            Puntaje: {candidate.averageScore}/5
+                          </span>
+                        </p>
+                      </Card>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-sm text-muted-foreground mt-2">
+                    No hay candidatos en este paso
+                  </p>
+                )}
+              </Card>
             );
           })}
         </div>
       ) : (
-        <Alert variant="info" className="text-center">
-          No se encontraron pasos en el flujo de entrevistas
+        <Alert>
+          <AlertDescription>
+            No se encontraron pasos en el flujo de entrevistas
+          </AlertDescription>
         </Alert>
       )}
-    </Container>
-
-
-
+    </div>
   );
 };
 
